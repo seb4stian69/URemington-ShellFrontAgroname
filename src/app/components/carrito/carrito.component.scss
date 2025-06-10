@@ -305,3 +305,177 @@
   }
 
 }
+
+/* --- Modal Overlay --- */
+.modal-overlay {
+  position: fixed; /* Stays in place even when scrolling */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top of other content */
+}
+
+/* --- Modal Content --- */
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 550px; /* Max width for larger screens */
+  transform: translateY(0); /* For potential animation */
+  animation: slideIn 0.3s ease-out forwards; /* Simple slide-in animation */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Modal Header --- */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+
+  h2 {
+    margin: 0;
+    font-size: 1.8em;
+    color: #333;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+/* --- Modal Body --- */
+.modal-body {
+  flex-grow: 1; /* Allows body to take available space */
+}
+
+.total-display {
+  text-align: center;
+  font-size: 1.3em;
+  margin-bottom: 25px;
+  color: #555;
+
+  strong {
+    color: #28a745; /* Green for total price */
+    font-size: 1.2em;
+  }
+}
+
+.payment-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid for cards */
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.payment-method-card {
+  background-color: #f8f8f8;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+
+  &:hover {
+    border-color: #007bff; /* Blue hover effect */
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.1);
+  }
+
+  &.selected {
+    border-color: #28a745; /* Green for selected method */
+    background-color: #e6ffe6; /* Light green background for selected */
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+  }
+
+  .method-icon {
+    font-size: 2.5em;
+    margin-bottom: 5px;
+  }
+
+  .method-label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1em;
+  }
+
+  .hidden-radio {
+    display: none; /* Hide the actual radio button */
+  }
+}
+
+/* --- Modal Footer --- */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+/* Re-use button styles from CarritoComponent or a shared stylesheet */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &-primary {
+    background-color: #007bff;
+    color: white;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+  }
+
+  &-secondary {
+    background-color: #6c757d;
+    color: white;
+
+    &:hover {
+      background-color: #5a6268;
+    }
+  }
+}

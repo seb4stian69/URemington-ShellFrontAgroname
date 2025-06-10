@@ -2,6 +2,7 @@
   <div>AgroÑame - Compradores</div>
   <div class="navbar-links">
     <button id="logout" (click)="logout()">Cerrar Sesion</button>
+    <a [routerLink]="['/dashboard/consumidor']">Productos</a>
   </div>
 </nav>
 
@@ -16,11 +17,13 @@
   <div *ngIf="cartItems.length > 0" class="cart-content">
     <div class="cart-items-table">
       <div class="cart-header">
-        <div class="cart-col product-img-col"></div> <div class="cart-col product-name-col">Producto</div>
+        <div class="cart-col product-img-col"></div>
+        <div class="cart-col product-name-col">Producto</div>
         <div class="cart-col product-price-col">Precio Unitario</div>
         <div class="cart-col product-qty-col">Cantidad</div>
         <div class="cart-col product-subtotal-col">Subtotal</div>
-        <div class="cart-col product-actions-col"></div> </div>
+        <div class="cart-col product-actions-col"></div>
+      </div>
 
       <div *ngFor="let item of cartItems" class="cart-item">
         <div class="cart-col product-img-col">
@@ -49,6 +52,34 @@
         <button class="btn btn-danger" (click)="clearCart()">Vaciar Carrito</button>
         <button class="btn btn-primary" (click)="proceedToCheckout()">Proceder al Pago</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="isPaymentModalOpen" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Seleccionar Método de Pago</h2>
+      <button class="close-btn" (click)="closeModal()">✖</button>
+    </div>
+
+    <div class="modal-body">
+      <p class="total-display">Total a pagar: <strong>${{ totalPrice.toFixed(2) }}</strong></p>
+
+      <div class="payment-methods-grid">
+        <div *ngFor="let method of paymentMethods" class="payment-method-card"
+          [class.selected]="selectedPaymentMethod === method.value" (click)="selectMethod(method.value)">
+          <div class="method-icon">{{ method.icon }}</div>
+          <div class="method-label">{{ method.label }}</div>
+          <input type="radio" [value]="method.value" [checked]="selectedPaymentMethod === method.value"
+            name="paymentMethod" class="hidden-radio">
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" (click)="confirmPayment()">Confirmar Pago</button>
     </div>
   </div>
 </div>
