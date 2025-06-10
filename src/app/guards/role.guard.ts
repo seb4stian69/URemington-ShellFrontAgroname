@@ -15,7 +15,7 @@ export class RoleGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): boolean | UrlTree {
     const expectedRole = route.data['role'];
     const user = this.auth.getCurrentUser();
-    const userRole = user?.idPerfil;
+    const userRole = user?.body?.perfil;
 
     return userRole === expectedRole
       ? true

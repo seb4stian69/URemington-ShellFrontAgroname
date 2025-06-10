@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { BaseRequest } from '../interfaces/base/baserequest';
+import { LoginDto } from '../interfaces/loginDto';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,22 @@ export class AuthService {
   private currentUser: any = null;
 
   login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, { username, password }).pipe(
+   
+    let request: BaseRequest<LoginDto> = {
+      "header": {
+        "ip": "",
+        "usuario": "",
+        "authToken": "",
+        "llaveSimetrica": ""
+      },
+      "body":{
+          "username": username,
+          "password": password,
+          "salt": "" 
+      }
+    }
+
+    return this.http.post(`${this.apiUrl}/login`, request).pipe(
       tap((user: any) => {
         this.currentUser = user;
         localStorage.setItem('user', JSON.stringify(user));
@@ -30,6 +47,7 @@ export class AuthService {
         return of(null);
       })
     );
+    
   }
 
   resetPassword(username: string): Observable<any> {

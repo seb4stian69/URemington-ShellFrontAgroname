@@ -44,7 +44,7 @@
         const { username, password } = this.loginForm.value;
         this.authService.login(username, password).subscribe({
           next: (user) => {
-            switch (user.idPerfil) {
+            switch (user.body?.perfil) {
               case '1':
                 this.router.navigate(['/dashboard/admin']);
                 break;

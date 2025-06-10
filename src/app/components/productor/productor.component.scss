@@ -1,8 +1,389 @@
-p{
+/* src/app/components/productor/productor.component.scss */
+
+// Estos estilos son globales y podrían ir en 'styles.scss' para ser aplicados a toda la app
+// Sin embargo, los incluyo aquí para que todo esté en un solo lugar al "copiar y pegar".
+body {
+  background-color: #eef4ed;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0; // Asegura que no haya márgenes por defecto en el body
+}
+
+.navbar {
+  background-color: #3d704d;
+  color: white;
+  font-weight: bold;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  a {
+    color: white;
+    margin-right: 15px;
+    text-decoration: none;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.container {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.d-flex {
+  display: flex !important;
+}
+
+.justify-content-between {
+  justify-content: space-between !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.mt-3 {
+  margin-top: 1rem !important;
+}
+
+.product-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  height: 100%; // Hace que todas las cards en una fila tengan la misma altura
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+}
+
+.product-details {
+  padding: 10px 0;
+  flex-grow: 1;
+  margin-bottom: 15px;
+
+  h5 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    margin-bottom: 0.4rem;
+    line-height: 1.4;
+    font-size: 0.95rem;
+  }
+
+  .price-info {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 60vh;
-    font-weight: 600;
-    font-size: 8em;
+    flex-wrap: wrap; // Permite que los elementos de precio se envuelvan
+
+    .original-price {
+      text-decoration: line-through;
+      color: #888;
+      font-weight: normal;
+      margin-right: 8px;
+    }
+
+    .final-price {
+      color: #e67e22; // Color para destacar el precio final con descuento
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+
+    .badge-discount {
+      background-color: #e74c3c;
+      color: white;
+      padding: 0.3em 0.6em;
+      border-radius: 0.25rem;
+      font-size: 0.85rem;
+      font-weight: bold;
+      vertical-align: middle;
+      margin-left: 5px;
+      white-space: nowrap;
+    }
+  }
+}
+
+.product-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+
+  button {
+    margin-right: 8px;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &.btn-block {
+      display: block;
+      width: 100%;
+      margin-right: 0;
+    }
+  }
+}
+
+// Estilos base de los botones de Bootstrap
+.btn {
+  display: inline-block;
+  font-weight: 400;
+  color: #212529;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); // Color de foco genérico
+  }
+
+  &-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+  }
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #388e3c;
+  border-color: #2e7d32;
+
+  &:hover {
+    background-color: darken(#388e3c, 10%);
+    border-color: darken(#2e7d32, 10%);
+  }
+}
+
+.btn-info {
+  color: #fff;
+  background-color: #66bb6a;
+  border-color: #5cb85c;
+
+  &:hover {
+    background-color: darken(#66bb6a, 10%);
+    border-color: darken(#5cb85c, 10%);
+  }
+}
+
+.btn-danger {
+  color: #fff;
+  background-color: #c62828;
+  border-color: #b71c1c;
+
+  &:hover {
+    background-color: darken(#c62828, 10%);
+    border-color: darken(#b71c1c, 10%);
+  }
+}
+
+// Estilos para el Modal (simulando el comportamiento de Bootstrap)
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
+
+  &.show {
+    display: flex;
+  }
+
+  &-dialog {
+    margin: 1.75rem auto;
+    max-width: 500px;
+    width: 90%;
+    pointer-events: none;
+
+    .show & {
+      pointer-events: auto;
+    }
+  }
+
+  &-content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.3rem;
+    outline: 0;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+  }
+
+  &-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: calc(0.3rem - 1px);
+    border-top-right-radius: calc(0.3rem - 1px);
+
+    .close {
+      padding: 1rem 1rem;
+      margin: -1rem -1rem -1rem auto;
+      background-color: transparent;
+      border: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #000;
+      text-shadow: 0 1px 0 #fff;
+      opacity: .5;
+      cursor: pointer;
+
+      &:hover {
+        opacity: .75;
+        text-decoration: none;
+      }
+
+      span {
+        display: block;
+      }
+    }
+  }
+
+  &-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+  }
+
+  &-body {
+    position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;
+  }
+
+  &-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    border-top: 1px solid #dee2e6;
+    border-bottom-right-radius: calc(0.3rem - 1px);
+    border-bottom-left-radius: calc(0.3rem - 1px);
+
+    button {
+      &:not(:last-child) {
+        margin-right: 0.25rem;
+      }
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+}
+
+.form-control-file {
+  display: block;
+  width: 100%;
+}
+
+textarea.form-control {
+  height: auto;
+}
+
+select.form-control {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 8px 10px;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  opacity: 0.5;
+  z-index: 1040;
+
+  &.fade {
+    transition: opacity 0.15s linear;
+  }
+
+  &.show {
+    opacity: 0.5;
+  }
 }
