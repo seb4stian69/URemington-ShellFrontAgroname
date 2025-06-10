@@ -1,11 +1,12 @@
 /* src/app/components/productor/productor.component.scss */
 
-// Estos estilos son globales y podrían ir en 'styles.scss' para ser aplicados a toda la app
-// Sin embargo, los incluyo aquí para que todo esté en un solo lugar al "copiar y pegar".
+// Estilos globales (considera mover a 'styles.scss' si aplica a toda la app)
 body {
   background-color: #eef4ed;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  margin: 0; // Asegura que no haya márgenes por defecto en el body
+  margin: 0;
+  // Añadir un overflow-y para el body si el contenido es muy largo, para evitar que el modal "estire" la página
+  // overflow-y: auto;
 }
 
 .navbar {
@@ -96,7 +97,7 @@ body {
     color: #333;
     display: flex;
     align-items: center;
-    flex-wrap: wrap; // Permite que los elementos de precio se envuelvan
+    flex-wrap: wrap;
 
     .original-price {
       text-decoration: line-through;
@@ -106,7 +107,7 @@ body {
     }
 
     .final-price {
-      color: #e67e22; // Color para destacar el precio final con descuento
+      color: #e67e22;
       font-size: 1.2rem;
       margin-right: 8px;
     }
@@ -145,7 +146,7 @@ body {
   }
 }
 
-// Estilos base de los botones de Bootstrap
+// Estilos base de los botones
 .btn {
   display: inline-block;
   font-weight: 400;
@@ -168,7 +169,7 @@ body {
 
   &:focus {
     outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); // Color de foco genérico
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
 
   &-sm {
@@ -212,66 +213,96 @@ body {
   }
 }
 
-// Estilos para el Modal (simulando el comportamiento de Bootstrap)
+// ===========================================
+// --- ESTILOS DEL MODAL (CORREGIDOS Y MEJORADOS) ---
+// ===========================================
 .modal {
-  position: fixed;
+  position: fixed; // Fija el modal en la ventana
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: none;
+  background-color: rgba(0, 0, 0, 0.5); // Fondo semi-transparente
+  display: flex; // Usa flexbox para centrar el contenido
   justify-content: center;
   align-items: center;
-  z-index: 1050;
+  z-index: 1050; // Asegura que esté por encima de la mayoría de los elementos
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: auto; // Permite scroll dentro del modal si el contenido es largo
   outline: 0;
 
-  &.show {
-    display: flex;
+  // Clases de Bootstrap para mostrar/ocultar y animaciones
+  &.fade {
+    opacity: 0;
+    transition: opacity 0.15s linear;
   }
 
+  &.show {
+    opacity: 1;
+    display: flex; // Asegura que se muestre cuando showProductModal es true
+  }
+
+  // Contenedor principal del contenido del modal
   &-dialog {
-    margin: 1.75rem auto;
-    max-width: 500px;
-    width: 90%;
-    pointer-events: none;
+    position: relative; // Para posicionamiento de elementos internos si es necesario
+    margin: 1.75rem auto; // Margen superior/inferior y centrado horizontal
+    max-width: 600px; // Aumentar un poco el ancho máximo para más espacio
+    width: 95%; // Que ocupe casi todo el ancho en pantallas pequeñas
+    pointer-events: none; // No interactuable por defecto
 
     .show & {
-      pointer-events: auto;
+      pointer-events: auto; // Hacer interactuable cuando el modal está visible
+      // Animación simple al mostrar
+      transform: translateY(-50px); // Empieza un poco arriba
+      animation: slideInModal 0.3s ease-out forwards; // Baja al centro
     }
   }
 
+  // Animación para el modal
+  @keyframes slideInModal {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // El contenido real del modal (fondo blanco, bordes, sombra)
   &-content {
     position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 100%; // Ocupa todo el ancho disponible del modal-dialog
     pointer-events: auto;
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 0.3rem;
+    border-radius: 0.5rem; // Bordes un poco más redondeados
     outline: 0;
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+    // Limitar la altura máxima del contenido y permitir scroll interno
+    max-height: 90vh; // Máximo 90% de la altura de la ventana
+    overflow-y: auto; // Permite el scroll dentro del contenido si es necesario
   }
 
   &-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 1rem 1rem;
+    padding: 1.25rem 1.5rem; // Más padding para mejor espaciado
     border-bottom: 1px solid #dee2e6;
-    border-top-left-radius: calc(0.3rem - 1px);
-    border-top-right-radius: calc(0.3rem - 1px);
+    border-top-left-radius: calc(0.5rem - 1px); // Ajustar al nuevo border-radius
+    border-top-right-radius: calc(0.5rem - 1px);
 
     .close {
-      padding: 1rem 1rem;
-      margin: -1rem -1rem -1rem auto;
+      padding: 1rem;
+      margin: -1rem -1rem -1rem auto; // Ajustar el margen para posicionar bien la 'X'
       background-color: transparent;
       border: 0;
-      font-size: 1.5rem;
+      font-size: 1.75rem; // Hacer la 'X' un poco más grande
       font-weight: 700;
       line-height: 1;
       color: #000;
@@ -293,12 +324,17 @@ body {
   &-title {
     margin-bottom: 0;
     line-height: 1.5;
+    font-size: 1.5rem; // Título un poco más grande
+    color: #333;
   }
 
   &-body {
     position: relative;
     flex: 1 1 auto;
-    padding: 1rem;
+    padding: 1.5rem; // Más padding para que los campos no se vean tan pegados
+    // Asegurarse de que el cuerpo pueda scrollear si el contenido es largo
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; // Mejor scroll en iOS
   }
 
   &-footer {
@@ -306,27 +342,28 @@ body {
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-end;
-    padding: 0.75rem;
+    padding: 1rem; // Más padding en el footer
     border-top: 1px solid #dee2e6;
-    border-bottom-right-radius: calc(0.3rem - 1px);
-    border-bottom-left-radius: calc(0.3rem - 1px);
+    border-bottom-right-radius: calc(0.5rem - 1px); // Ajustar al nuevo border-radius
+    border-bottom-left-radius: calc(0.5rem - 1px);
 
     button {
       &:not(:last-child) {
-        margin-right: 0.25rem;
+        margin-right: 0.5rem; // Más espacio entre botones
       }
     }
   }
 }
 
+// Estilos para los campos de formulario dentro del modal
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem; // Más espacio entre grupos de formulario
 }
 
 .form-control {
   display: block;
-  width: 100%;
-  padding: 0.375rem 0.75rem;
+  width: 100%; // ¡Hacer que el control de formulario ocupe el 100% del ancho del grupo!
+  padding: 0.5rem 0.75rem; // Más padding para una mejor interacción
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -334,13 +371,13 @@ body {
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #ced4da;
-  border-radius: 0.25rem;
+  border-radius: 0.35rem; // Ligeramente más redondeado
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
   &:focus {
     color: #495057;
     background-color: #fff;
-    border-color: #80bdff;
+    border-color: #66b5ff; // Un azul un poco más amigable
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
   }
@@ -353,6 +390,7 @@ body {
 
 textarea.form-control {
   height: auto;
+  min-height: 80px; // Altura mínima para textareas
 }
 
 select.form-control {
@@ -369,7 +407,27 @@ select.form-control {
   text-align: center !important;
 }
 
+// Estilo de la imagen de vista previa
+#previewImagen {
+  max-width: 100%;
+  max-height: 180px; // Ligeramente más pequeña para dejar espacio
+  object-fit: contain; // Asegura que la imagen completa sea visible
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #eee; // Un borde sutil para destacar la imagen
+}
+
+// Si estás usando una clase 'd-block' para mostrar, asegúrate de que se aplique correctamente al modal
+// `.modal.d-block` es lo que activa el `display: flex;` del modal.
+// El `[class.show]="showProductModal" [class.d-block]="showProductModal"` en tu HTML
+// junto con el `*ngIf="showProductModal"` ya debería manejar esto bien.
+
+// No necesitas una `.modal-backdrop` separada si tu `.modal` ya tiene un `background-color: rgba(0, 0, 0, 0.5);`
+// Si la tuvieras definida y usada en el HTML, deberías revisarla.
 .modal-backdrop {
+  /* Si el modal ya tiene background, esta puede ser redundante o necesitar ajustes */
+  display: none; // Esconderla si el .modal ya hace de fondo
   position: fixed;
   top: 0;
   left: 0;
@@ -385,5 +443,6 @@ select.form-control {
 
   &.show {
     opacity: 0.5;
+    display: block; // Mostrarla si se usa explícitamente en el HTML
   }
 }

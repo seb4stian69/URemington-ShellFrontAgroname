@@ -63,6 +63,42 @@ export class ConsumidorComponent implements OnInit {
       next: (res: Product[]) => {
         console.log('Productos recibidos de la API:', res);
         this.productos = res; // Assign fetched products to the original list
+        
+        // --------------------------------------------------------------------------
+    // Lógica para AGREGAR productos desde localStorage
+    // --------------------------------------------------------------------------
+    try {
+      const storedProductsString = localStorage.getItem("agroñame_products");
+      if (storedProductsString) {
+        const localStorageProducts: Product[] = JSON.parse(storedProductsString);
+        console.log('Productos encontrados en localStorage para consumidor:', localStorageProducts);
+
+        // Opcional: Filtrar duplicados si los IDs (codprod) pueden coincidir.
+        // Si asumes que los productos de localStorage son ADICIONALES y no reemplazan,
+        // puedes simplemente concatenar. Si pueden haber duplicados y quieres priorizar
+        // los del servicio o los del localStorage, la lógica de fusión sería más compleja.
+
+        // Opción 1: Simplemente concatenar (asumiendo que son productos adicionales)
+        this.productos = this.productos.concat(localStorageProducts);
+
+        // Opción 2 (Más robusta para evitar duplicados por codprod):
+        // Crear un Set de codprod de los productos iniciales
+        // const existingCodprods = new Set(this.productos.map(p => p.codprod));
+        // // Filtrar los productos de localStorage que ya existen en la lista inicial
+        // const newProductsFromLocalStorage = localStorageProducts.filter(
+        //   p => !existingCodprods.has(p.codprod)
+        // );
+        // // Concatenar solo los productos nuevos de localStorage
+        // this.productos = this.productos.concat(newProductsFromLocalStorage);
+
+
+      }
+    } catch (e) {
+      console.error('Error al cargar productos de localStorage en consumidor:', e);
+      // Opcional: Manejar el error, quizás con un mensaje al usuario
+    }
+    // --------------------------------------------------------------------------
+        
         this.calcularPreciosFinales(); // Calculate final prices for all products
         this.applyFilter(); // Apply initial filter (which will show all products if filter is empty)
       },
