@@ -1,0 +1,54 @@
+<nav class="navbar">
+  <div>AgroÑame - Compradores</div>
+  <div class="navbar-links">
+    <a [routerLink]="['/dashboard/consumidor/carrito']" class="active-link">Cerrar Sesion</a>
+  </div>
+</nav>
+
+<div class="container">
+  <h4 class="section-title">Tu Carrito de Compras</h4>
+
+  <div *ngIf="cartItems.length === 0" class="empty-cart-message">
+    <p>Tu carrito está vacío. ¡Añade algunos productos frescos!</p>
+    <button class="btn btn-primary" (click)="continueShopping()">Explorar Productos</button>
+  </div>
+
+  <div *ngIf="cartItems.length > 0" class="cart-content">
+    <div class="cart-items-table">
+      <div class="cart-header">
+        <div class="cart-col product-img-col"></div> <div class="cart-col product-name-col">Producto</div>
+        <div class="cart-col product-price-col">Precio Unitario</div>
+        <div class="cart-col product-qty-col">Cantidad</div>
+        <div class="cart-col product-subtotal-col">Subtotal</div>
+        <div class="cart-col product-actions-col"></div> </div>
+
+      <div *ngFor="let item of cartItems" class="cart-item">
+        <div class="cart-col product-img-col">
+          <img [src]="item.foto" [alt]="item.nombre">
+        </div>
+        <div class="cart-col product-name-col">{{ item.nombre }}</div>
+        <div class="cart-col product-price-col">${{ item.precioFinal?.toFixed(2) }}</div>
+        <div class="cart-col product-qty-col quantity-controls">
+          <button class="qty-btn" (click)="updateQuantity(item, -1)">-</button>
+          <span>{{ item.quantity }}</span>
+          <button class="qty-btn" (click)="updateQuantity(item, 1)">+</button>
+        </div>
+        <div class="cart-col product-subtotal-col">${{ (item.precioFinal! * item.quantity).toFixed(2) }}</div>
+        <div class="cart-col product-actions-col">
+          <button class="remove-btn" (click)="removeItem(item.codprod)">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <div class="total-price">
+        <strong>Total del Carrito:</strong> <span>${{ totalPrice.toFixed(2) }}</span>
+      </div>
+      <div class="cart-actions">
+        <button class="btn btn-secondary" (click)="continueShopping()">Continuar Comprando</button>
+        <button class="btn btn-danger" (click)="clearCart()">Vaciar Carrito</button>
+        <button class="btn btn-primary" (click)="proceedToCheckout()">Proceder al Pago</button>
+      </div>
+    </div>
+  </div>
+</div>

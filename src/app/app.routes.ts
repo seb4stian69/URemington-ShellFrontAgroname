@@ -27,6 +27,13 @@ export const routes: Routes = [
     loadComponent: () => import('./components/consumidor/consumidor.component').then(m => m.ConsumidorComponent)
   },
   {
+    path: 'dashboard/consumidor/carrito',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: '3' },
+    loadComponent: () => import('./components/carrito/carrito.component').then(m => m.CarritoComponent)
+
+  },
+  {
     path: '**',
     redirectTo: 'login'
   }

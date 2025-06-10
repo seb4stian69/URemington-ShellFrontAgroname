@@ -1,19 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Import CommonModule for ngFor, ngIf, etc.
 import { ProductService } from '../../services/product.service';
+import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
+import { RouterModule } from '@angular/router'; // Add this import
 
-interface Product {
+
+export interface Product {
+  codprod: number;
+  nombre: string;
+  precio_base: number;
+  unidad_medida: string;
+  foto: string;
+  disponibilidad: number;
+  porc_descuento: number;
+  categoria: string;
+  practicas_cultivo: string;
+  ubicacion: Ubicacion;
+  productor: Productor;
+  precioFinal?: number; // Added for calculated final price
+}
+
+export interface Ubicacion {
+  departamento: string;
+  municipio: string;
+}
+
+export interface Productor {
   id: number;
   nombre: string;
-  precio: number;
-  unidad: string;
-  foto: string;
-  practicas: string;
-  disponibilidad: number;
-  descuento: number;
-  categoria: string;
-  productor: number;
-  precioFinal?: number; // Add an optional property for the calculated final price
 }
 
 // Interfaz para un ítem del carrito (producto con cantidad)
@@ -24,82 +38,65 @@ interface CartItem extends Product {
 @Component({
   selector: 'app-consumidor',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, RouterModule], // Add FormsModule here
   templateUrl: './consumidor.component.html',
   styleUrl: './consumidor.component.scss',
   providers: [ProductService],
-  
 })
 export class ConsumidorComponent implements OnInit {
-  productos: Product[] = [
-    {
-      id: 1,
-      nombre: "Ñame criollo",
-      precio: 3500.00,
-      unidad: "kg",
-      foto: "https://cdn.sitio.com/imagenes/ñame1.jpg", // Asegúrate de que esta URL sea accesible
-      practicas: "Agricultura orgánica sin pesticidas",
-      disponibilidad: 50,
-      descuento: 10.0,
-      categoria: "Tubérculos",
-      productor: 1001
-    },
-    {
-      id: 2,
-      nombre: "Aguacate Hass",
-      precio: 6000.00,
-      unidad: "unidad",
-      foto: "https://via.placeholder.com/200x200/4CAF50/FFFFFF?text=Aguacate", // Ejemplo de URL
-      practicas: "Cultivo sostenible",
-      disponibilidad: 100,
-      descuento: 5.0,
-      categoria: "Frutas",
-      productor: 1002
-    },
-    {
-      id: 3,
-      nombre: "Tomate Chonto",
-      precio: 2800.00,
-      unidad: "kg",
-      foto: "https://via.placeholder.com/200x200/FF5722/FFFFFF?text=Tomate", // Ejemplo de URL
-      practicas: "Libre de agroquímicos",
-      disponibilidad: 75,
-      descuento: 0.0,
-      categoria: "Hortalizas",
-      productor: 1003
-    }
-    // Puedes añadir más productos aquí para probar la cuadrícula 3x3
-  ];
+
+  productos: Product[] = []; // Holds the original, unfiltered list of products
+  filteredProductos: Product[] = []; // Holds the products displayed after filtering
+  locationFilter: string = ''; // Property to bind to the search input
 
   // Propiedad para almacenar los ítems del carrito
   cartItems: CartItem[] = [];
 
-  constructor(private pService: ProductService){}
+  constructor(private pService: ProductService) {}
 
   ngOnInit() {
-    this.calcularPreciosFinales();
-    localStorage.setItem('agroñame_cart', '[]');
-    this.loadCartFromLocalStorage(); // Cargar el carrito al iniciar el componente
+    // Initialize localStorage for the cart if it doesn't exist or is invalid
+    this.loadCartFromLocalStorage();
+
     this.pService.getAllProductos().subscribe({
-      next: (res: Product[]) => { // Esperamos que 'res' sea un array de Product
+      next: (res: Product[]) => {
         console.log('Productos recibidos de la API:', res);
-        this.productos = res; // Asigna los productos recibidos de la API a tu array 'productos'
-        this.calcularPreciosFinales(); // Calcula los precios finales DESPUÉS de que los productos se carguen
+        this.productos = res; // Assign fetched products to the original list
+        this.calcularPreciosFinales(); // Calculate final prices for all products
+        this.applyFilter(); // Apply initial filter (which will show all products if filter is empty)
       },
       error: (err) => {
         console.error('Error al obtener productos:', err);
+        // You might want to display a user-friendly error message here
       }
-    }); 
+    });
   }
 
   private calcularPreciosFinales(): void {
     this.productos = this.productos.map(p => ({
       ...p,
-      precioFinal: p.precio - (p.precio * p.descuento / 100)
+      precioFinal: p.precio_base - (p.precio_base * p.porc_descuento / 100)
     }));
   }
 
-  // --- Funciones para el Carrito ---
+  // --- Filtering Logic ---
+  applyFilter(): void {
+    const filterValue = this.locationFilter.toLowerCase().trim();
+
+    if (!filterValue) {
+      // If the filter is empty, show all products
+      this.filteredProductos = [...this.productos];
+      return;
+    }
+
+    // Filter products based on municipio or departamento
+    this.filteredProductos = this.productos.filter(p =>
+      p.ubicacion.municipio.toLowerCase().includes(filterValue) ||
+      p.ubicacion.departamento.toLowerCase().includes(filterValue)
+    );
+  }
+
+  // --- Cart Functions ---
 
   // Guarda el carrito actual en localStorage
   private saveCartToLocalStorage(): void {
@@ -129,31 +126,29 @@ export class ConsumidorComponent implements OnInit {
 
   // Añade un producto al carrito
   addToCart(product: Product): void {
+    console.log("Adding to cart:", product.nombre);
 
-    console.log("Entre")
-
-    const existingItem = this.cartItems.find(item => item.id === product.id);
+    const existingItem = this.cartItems.find(item => item.codprod === product.codprod);
 
     if (existingItem) {
-      // Si el producto ya está en el carrito, incrementa la cantidad
+      // If the product is already in the cart, increment the quantity
       existingItem.quantity++;
       console.log(`Cantidad de "${product.nombre}" incrementada a ${existingItem.quantity}`);
     } else {
-      // Si el producto no está en el carrito, agrégalo con cantidad 1
+      // If the product is not in the cart, add it with quantity 1
       const newItem: CartItem = { ...product, quantity: 1 };
       this.cartItems.push(newItem);
       console.log(`"${product.nombre}" añadido al carrito.`);
     }
 
-    this.saveCartToLocalStorage(); // Guarda el carrito después de cada modificación
-    // Opcional: Mostrar una notificación al usuario (ej. un Toast)
+    this.saveCartToLocalStorage(); // Save the cart after every modification
+    // Optional: Show a user notification (e.g., a Toast)
     alert(`"${product.nombre}" ha sido añadido al carrito.`);
-
   }
 
   // Opcional: Eliminar un ítem del carrito
   removeFromCart(productId: number): void {
-    this.cartItems = this.cartItems.filter(item => item.id !== productId);
+    this.cartItems = this.cartItems.filter(item => item.codprod !== productId);
     this.saveCartToLocalStorage();
     console.log(`Producto con ID ${productId} eliminado del carrito.`);
     alert(`Producto eliminado del carrito.`);

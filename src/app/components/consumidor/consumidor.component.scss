@@ -26,6 +26,7 @@ body {
     text-decoration: none;
     font-size: 1rem;
     transition: color 0.3s ease;
+    cursor: pointer;
 }
 
 .navbar-links a:hover {
@@ -59,7 +60,7 @@ body {
 
 /* Tarjeta de Producto */
 .product-card {
-    border: 1px solid #ddd;
+    border: 1px solid black solid #ddd;
     border-radius: 10px;
     padding: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -156,6 +157,20 @@ body {
     margin-bottom: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+.filter-bar {
+  margin-bottom: 25px; /* Space below the filter bar and above the product grid */
+  display: flex; /* Helps in aligning input if you add more elements later */
+  justify-content: flex-start; /* Aligns input to the left */
+  height: 3em;
+}
+
+.filter-bar input{
+    padding: 0 10px; /* Optional: adds a little padding if you want it to not touch edges */
+    width: 17em;
+    border: 1px solid rgb(68, 68, 68);
+    border-radius: 4em;
 }
 
 /* Media Queries para Responsividad */

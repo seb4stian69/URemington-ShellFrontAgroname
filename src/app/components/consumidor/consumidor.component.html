@@ -1,29 +1,44 @@
 <nav class="navbar">
     <div>AgroÑame - Compradores</div>
-    <div>
-      <a>Carrito</a>
+    <div class="navbar-links">
+        <a [routerLink]="['/dashboard/consumidor/carrito']">Carrito</a>
     </div>
 </nav>
 
 <div class="container">
-    
+
     <h4 class="section-title">Catálogo de Productos Disponibles</h4>
 
+    <div class="filter-bar">
+        <input type="text" 
+               [(ngModel)]="locationFilter" 
+               (input)="applyFilter()" 
+               placeholder="Filtrar por municipio o departamento"
+               class="location-search-input">
+    </div>
+
     <div class="product-grid">
-        <div class="product-card" *ngFor="let p of productos">
+        <div class="product-card" *ngFor="let p of filteredProductos">
             <img [src]="p.foto" [alt]="p.nombre">
             <div class="product-details">
                 <h5>{{ p.nombre }}</h5>
                 <p>
-                    <strong>Precio:</strong> ${{ p.precioFinal?.toFixed(2) }}
-                    <span class="price-before">(antes ${{ p.precio }})</span>
+                    <strong>Precio:</strong> ${{ (p.precio_base * (1 - p.porc_descuento / 100)).toFixed(2) }}
+                    <span class="price-before" *ngIf="p.porc_descuento > 0">(antes ${{ p.precio_base.toFixed(2)
+                        }})</span>
                 </p>
-                <p><span class="badge-discount">{{ p.descuento }}% de descuento</span></p>
+                <p *ngIf="p.porc_descuento > 0"><span class="badge-discount">{{ p.porc_descuento }}% de descuento</span>
+                </p>
                 <p><strong>Disponibilidad:</strong> {{ p.disponibilidad }} unidades</p>
-                <p><strong>Unidad:</strong> {{ p.unidad }}</p>
-                <p><strong>Prácticas de Cultivo:</strong> {{ p.practicas }}</p>
+                <p><strong>Unidad:</strong> {{ p.unidad_medida }}</p>
+                <p><strong>Prácticas de Cultivo:</strong> {{ p.practicas_cultivo }}</p>
+                <p><strong>Ubicación:</strong> {{ p.ubicacion.municipio }}, {{ p.ubicacion.departamento }}</p>
+                <p><strong>Productor:</strong> {{ p.productor.nombre }}</p>
             </div>
             <button class="btn-add-to-cart" (click)="addToCart(p)">Añadir al Carrito</button>
+        </div>
+        <div *ngIf="filteredProductos.length === 0" class="no-products-message">
+            No se encontraron productos para la ubicación seleccionada.
         </div>
     </div>
 
