@@ -1,0 +1,61 @@
+<!-- login.component.html -->
+
+<div class="login-container">
+  <h2>Iniciar Sesión</h2>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <div class="form-group">
+      <input
+        type="text"
+        id="username"
+        formControlName="username"
+        class="form-control"
+        placeholder="Ingrese su usuario"
+      />
+      <div *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid" class="error">
+        Usuario requerido.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <input
+        type="password"
+        id="password"
+        formControlName="password"
+        class="form-control"
+        placeholder="Ingrese su contraseña"
+      />
+      <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="error">
+        Contraseña requerida.
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+      Iniciar Sesión
+    </button>
+
+    <button type="button" class="btn btn-link" (click)="toggleReset()">
+      ¿Olvidaste tu contraseña?
+    </button>
+  </form>
+
+  <form [formGroup]="resetForm" (ngSubmit)="onLogin()">
+
+    <div *ngIf="showReset" class="reset-section">
+      <h3>Restablecer Contraseña</h3>
+      <input
+        formControlName="username"
+        class="form-control"
+        placeholder="Usuario asociado"
+      />
+      <button class="btn btn-warning mt-2" (click)="onResetPassword()" type="button">
+        Enviar correo de recuperación
+      </button>
+    </div>
+  </form>
+
+</div>

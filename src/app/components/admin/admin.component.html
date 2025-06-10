@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es" >
+<head>
+  <meta charset="UTF-8" />
+  <title>AgroÑame</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <style>
+    body {
+      background-color: #eef4ed;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+    }
+    .sidebar {
+      min-width: 200px;
+      background-color: #2f4f2f;
+      color: white;
+      padding: 20px;
+      height: 100vh;
+      position: sticky;
+    }
+    #logout{
+      background-color: rgb(236, 66, 66);
+    }
+    .sidebar h5 {
+      color: #d4edda;
+    }
+    .sidebar .nav-link {
+      color: #d4edda;
+    }
+    .sidebar .nav-link:hover {
+      background-color: #3d704d;
+      border-radius: 5px;
+    }
+    .content {
+      flex-grow: 1;
+      padding: 20px;
+    }
+    .navbar {
+      background-color: #3d704d;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card-header {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .btn-primary {
+      background-color: #388e3c;
+      border-color: #2e7d32;
+    }
+    .btn-info {
+      background-color: #66bb6a;
+    }
+    .btn-danger {
+      background-color: #c62828;
+    }
+    .modal-header {
+      background-color: #66bb6a;
+      color: white;
+    }
+    .badge-success {
+      background-color: #43a047;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h5>🌿 AgroÑame</h5>
+    <button id="logout" (click)="logout()">Cerrar Sesion</button>
+  </div>
+
+  <!-- Content -->
+  <div class="content w-100">
+    <div class="navbar p-3 mb-4">
+      Panel de Administración - AgroÑame
+    </div>
+
+    <!-- Persona -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Personas</h5>
+        <button class="btn btn-primary btn-sm" (click)="abrirModalPersonaNuevo()">+ Nueva Persona</button>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover table-sm" id="tablaPersonas">
+          <thead class="thead-light">
+            <tr>
+              <th>Id</th>
+              <th>Primer Nombre</th>
+              <th>Segundo Nombre</th>
+              <th>Primer Apellido</th>
+              <th>Segundo Apellido</th>
+              <th>Direccion</th>
+              <th>Telefono</th>
+              <th>Celular</th>
+              <th>Correo</th>
+              <th>Fecha Nacimiento</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let persona of personas">
+              <td>{{ persona.personaId }}</td>
+              <td><input [(ngModel)]="persona.primerNombre" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="persona.segundoNombre" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="persona.primerApellido" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="persona.segundoApellido" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="persona.direccion" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="persona.telefono" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="persona.celular" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="persona.correo" class="form-control form-control-sm" /></td>
+              <td>
+                <input [(ngModel)]="persona.fechaNacimiento" type="date" class="form-control form-control-sm" />
+              </td>
+              <td>
+                <select [(ngModel)]="persona.estado" class="form-control form-control-sm">
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-success" (click)="guardarPersona(persona)">Editar</button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(persona.personaId, 'personas')">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal: Persona -->
+    <div *ngIf="modalPersonaVisible" class="modal d-block" tabindex="-1" role="dialog" aria-labelledby="modalPersonaLabel" aria-modal="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form [formGroup]="formPersona" (ngSubmit)="guardarPersona(null)">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalPersonaLabel">Agregar/Editar Persona</h5>
+              <button type="button" class="close" aria-label="Cerrar" (click)="cerrarModalPersona()">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+
+            <div class="modal-body">
+
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="personaId" placeholder="Cédula" />
+                  <small class="text-danger" *ngIf="formPersona.get('personaId')?.touched && formPersona.get('personaId')?.invalid">
+                    <span *ngIf="formPersona.get('personaId')?.errors?.['required']">Este campo es obligatorio.</span>
+                    <span *ngIf="formPersona.get('personaId')?.errors?.['pattern']">Solo se permiten numeros.</span>
+                </small>
+              </div>
+
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="primerNombre" placeholder="Primer Nombre" />
+                <small class="text-danger" *ngIf="formPersona.get('primerNombre')?.touched && formPersona.get('primerNombre')?.invalid">
+                  <span *ngIf="formPersona.get('primerNombre')?.errors?.['required']">Este campo es obligatorio.</span>
+                  <span *ngIf="formPersona.get('primerNombre')?.errors?.['pattern']">Solo se permiten letras.</span>
+                </small>
+              </div>
+
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="segundoNombre" placeholder="Segundo Nombre" />
+                <small class="text-danger" *ngIf="formPersona.get('segundoNombre')?.touched && formPersona.get('segundoNombre')?.errors?.['pattern']">
+                  Solo se permiten letras.
+                </small>
+              </div>
+
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="primerApellido" placeholder="Primer Apellido" />
+                <small class="text-danger" *ngIf="formPersona.get('primerApellido')?.touched && formPersona.get('primerApellido')?.invalid">
+                  <span *ngIf="formPersona.get('primerApellido')?.errors?.['required']">Este campo es obligatorio.</span>
+                  <span *ngIf="formPersona.get('primerApellido')?.errors?.['pattern']">Solo se permiten letras.</span>
+                </small>
+              </div>
+
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="segundoApellido" placeholder="Segundo Apellido" />
+                <small class="text-danger" *ngIf="formPersona.get('segundoApellido')?.touched && formPersona.get('segundoApellido')?.errors?.['pattern']">
+                  Solo se permiten letras.
+                </small>
+              </div>
+
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="direccion" placeholder="Dirección" />
+              </div>
+
+              <div class="form-group">
+                <input type="tel" class="form-control" formControlName="telefono" placeholder="Teléfono" />
+              </div>
+
+              <div class="form-group">
+                <input type="tel" class="form-control" formControlName="celular" placeholder="Celular" />
+              </div>
+
+              <div class="form-group">
+                <input type="email" class="form-control" formControlName="correo" placeholder="Correo Electrónico" />
+                <small class="text-danger" *ngIf="formPersona.get('correo')?.touched && formPersona.get('correo')?.invalid">
+                  <span *ngIf="formPersona.get('correo')?.errors?.['required']">El correo es obligatorio.</span>
+                  <span *ngIf="formPersona.get('correo')?.errors?.['email']">Formato de correo inválido.</span>
+                </small>
+              </div>
+
+              <div class="form-group">
+                <input type="date" class="form-control" formControlName="fechaNacimiento" placeholder="Fecha de Nacimiento" />
+              </div>
+
+              <div class="form-group">
+                <select class="form-control" formControlName="estado">
+                  <option value="" disabled selected>Estado</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+                <small class="text-danger" *ngIf="formPersona.get('estado')?.touched && formPersona.get('estado')?.errors?.['required']">
+                  El estado es obligatorio.
+                </small>
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="cerrarModalPersona()">Cancelar</button>
+              <button type="submit" class="btn btn-primary" [disabled]="formPersona.invalid">Guardar Persona</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+    <!-- Usuarios -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Usuarios</h5>
+        <button class="btn btn-primary btn-sm" (click)="abrirModalUsuarioNuevo()">+ Nuevo usuario</button>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover table-sm" id="tablaUsuarios">
+          <thead class="thead-light">
+            <tr>
+              <th>Id</th>
+              <th>Nombre de usuario</th>
+              <th>Contrasena HASH</th>
+              <th>Perfil</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let usuario of usuarios">
+              <td>{{ usuario.usuarioId }}</td>
+              <td><input [(ngModel)]="usuario.nombreUsuario" class="form-control form-control-sm" /></td>
+              <td><input [(ngModel)]="usuario.contrasena" class="form-control form-control-sm" /></td>
+              <select [(ngModel)]="usuario.perfil" class="form-control form-control-sm">
+                <option *ngFor="let perfil of perfiles" [ngValue]="perfil.id">
+                  {{ perfil.descripcion }}
+                </option>
+              </select>
+              <td>
+                <select [(ngModel)]="usuario.estado" class="form-control form-control-sm">
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-success" (click)="guardarUsuario(usuario)">Editar</button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(usuario.usuarioId, 'usuario')">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal: Usuario -->
+    <div *ngIf="modalUsuarioVisible" class="modal d-block" tabindex="-1" role="dialog" aria-labelledby="modalUsuarioLabel" aria-modal="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form [formGroup]="formUsuario" (ngSubmit)="guardarUsuario(null)">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalUsuarioLabel">Agregar/Editar Usuario</h5>
+              <button type="button" class="close" aria-label="Cerrar" (click)="cerrarModalUsuario()">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+              <div class="form-group">
+                <select class="form-control" formControlName="usuarioId" placeholder="Persona">
+                  <option value="" disabled selected>Persona</option> <!-- Placeholder for select -->
+                  <option *ngFor="let persona of personas" value="{{ persona.personaId }}">
+                    {{ persona.primerNombre }} {{ persona.primerApellido }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="nombreUsuario" placeholder="Nombre de Usuario" required />
+              </div>
+
+              <div class="form-group">
+                <input type="password" class="form-control" formControlName="contrasena" placeholder="Contraseña" required />
+                <!-- Puedes calcular el HASH en el backend o JS -->
+              </div>
+
+              <div class="form-group">
+                <select class="form-control" formControlName="perfil" placeholder="Perfil">
+                  <option value="" disabled selected>Perfil</option> <!-- Placeholder for select -->
+                  <option value="1">Administrador</option>
+                  <option value="2">Agricultor</option>
+                  <option value="3">Consumidores</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <select class="form-control" formControlName="estado" placeholder="Estado">
+                   <option value="" disabled selected>Estado</option> <!-- Placeholder for select -->
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="cerrarModalUsuario()">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+    <!-- Perfiles -->
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5>Perfiles</h5>
+        <button class="btn btn-primary btn-sm" (click)="abrirModalPerfilNuevo()">+ Nuevo perfil</button>
+      </div>
+      <div class="card-body">
+        <table class="table table-bordered table-hover table-sm" id="tablaPerfiles">
+          <thead class="thead-light">
+            <tr>
+              <th>Id</th>
+              <th>Descripcion</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let perfil of perfiles">
+              <td>{{ perfil.id }}</td>
+              <td><input [(ngModel)]="perfil.descripcion" class="form-control form-control-sm" /></td>
+              <td>
+                <select [(ngModel)]="perfil.estado" class="form-control form-control-sm">
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-success" (click)="guardarPerfil(perfil)">Editar</button>
+                <button class="btn btn-sm btn-danger" (click)="eliminar(perfil.id, 'perfil')">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal: Perfiles -->
+    <div *ngIf="modalPerfilVisible" class="modal d-block" tabindex="-1" role="dialog" aria-labelledby="modalPerfilLabel" aria-modal="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form [formGroup]="formPerfil" (ngSubmit)="guardarPerfil(null)">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalPerfilLabel">Agregar/Editar Perfil</h5>
+              <button type="button" class="close" aria-label="Cerrar" (click)="cerrarModalPerfil()">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="id" placeholder="ID Perfil" required />
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" formControlName="descripcion" placeholder="Descripción" required />
+              </div>
+              <div class="form-group">
+                <select class="form-control" formControlName="estado" placeholder="Estado">
+                  <option value="" disabled selected>Estado</option> <!-- Placeholder for select -->
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" (click)="cerrarModalPerfil()">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar Perfil</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
