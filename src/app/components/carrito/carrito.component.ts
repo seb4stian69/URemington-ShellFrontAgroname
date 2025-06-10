@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Required for *ngIf, *ngFor
 import { Router, RouterModule } from '@angular/router'; // Required for navigation and routerLink
 import { FormsModule } from '@angular/forms'; // Required for ngModel, even if not directly used for quantity input here, good practice.
+import { AuthService } from '../../services/auth.service';
 
 // --- Interfaces ---
 // It's best practice to define these in a shared file (e.g., src/app/shared/interfaces.ts)
@@ -50,7 +51,7 @@ export class CarritoComponent implements OnInit {
   cartItems: CartItem[] = []; // Array to hold the items in the cart
   totalPrice: number = 0;    // Total price of all items in the cart
 
-  constructor(private router: Router) { } // Inject Angular's Router service
+  constructor(private router: Router, private authService: AuthService) { } // Inject Angular's Router service
 
   ngOnInit(): void {
     this.loadCartFromLocalStorage(); // Load cart data when the component initializes
@@ -163,4 +164,9 @@ export class CarritoComponent implements OnInit {
     // In a real application, you would navigate to a checkout page:
     // this.router.navigate(['/checkout']);
   }
+
+    logout(){
+      this.authService.logout();
+    }
+
 }

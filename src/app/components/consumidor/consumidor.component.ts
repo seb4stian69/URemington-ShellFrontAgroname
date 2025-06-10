@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common'; // Import CommonModule for ngFor
 import { ProductService } from '../../services/product.service';
 import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
 import { RouterModule } from '@angular/router'; // Add this import
+import { AuthService } from '../../services/auth.service';
 
 
 export interface Product {
@@ -52,7 +53,7 @@ export class ConsumidorComponent implements OnInit {
   // Propiedad para almacenar los ítems del carrito
   cartItems: CartItem[] = [];
 
-  constructor(private pService: ProductService) {}
+  constructor(private pService: ProductService, private authService: AuthService) {}
 
   ngOnInit() {
     // Initialize localStorage for the cart if it doesn't exist or is invalid
@@ -166,4 +167,9 @@ export class ConsumidorComponent implements OnInit {
   getTotalCartItems(): number {
     return this.cartItems.reduce((total, item) => total + item.quantity, 0);
   }
+
+      logout(){
+      this.authService.logout();
+    }
+
 }
